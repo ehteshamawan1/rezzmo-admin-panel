@@ -1,50 +1,50 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
+import Login from './pages/Login';
+import DashboardLayout from './components/DashboardLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Dashboard from './pages/Dashboard';
+import Users from './pages/Users';
+import Trainers from './pages/Trainers';
+import Analytics from './pages/Analytics';
+import Moderation from './pages/Moderation';
 
 function App() {
   return (
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#00879E',
+          colorPrimary: '#00ffff', // Electric Cyan - Rezzmo brand color
           borderRadius: 8,
+          colorLink: '#0891b2', // Deep Cyan for links
         },
       }}
     >
       <Router>
-        <div className="min-h-screen bg-neutral-offWhite">
-          <header className="bg-primary text-white p-6 shadow-md">
-            <div className="container mx-auto">
-              <h1 className="text-3xl font-bold">Rezzmo Admin Dashboard</h1>
-              <p className="text-sm mt-1">Manage your fitness platform</p>
-            </div>
-          </header>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
 
-          <main className="container mx-auto p-6">
-            <div className="bg-white rounded-lg shadow p-8">
-              <h2 className="text-2xl font-bold mb-4">Welcome to Rezzmo Admin Panel</h2>
-              <p className="text-neutral-mediumGray">
-                This admin dashboard will be fully developed in Milestone 2 and beyond.
-              </p>
+          {/* Protected Admin Routes */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="trainers" element={<Trainers />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="moderation" element={<Moderation />} />
+          </Route>
 
-              <div className="mt-6 grid md:grid-cols-3 gap-4">
-                <div className="border border-neutral-lightGray rounded-lg p-4">
-                  <h3 className="font-bold text-lg mb-2">User Management</h3>
-                  <p className="text-sm text-neutral-mediumGray">View and manage all users</p>
-                </div>
-                <div className="border border-neutral-lightGray rounded-lg p-4">
-                  <h3 className="font-bold text-lg mb-2">Content Moderation</h3>
-                  <p className="text-sm text-neutral-mediumGray">Review reported content</p>
-                </div>
-                <div className="border border-neutral-lightGray rounded-lg p-4">
-                  <h3 className="font-bold text-lg mb-2">Analytics</h3>
-                  <p className="text-sm text-neutral-mediumGray">Platform metrics and insights</p>
-                </div>
-              </div>
-            </div>
-          </main>
-        </div>
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
       </Router>
     </ConfigProvider>
   );
